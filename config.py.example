@@ -1,0 +1,12 @@
+twilio = dict(
+	account_sid = "XXXXX",
+	auth_token = "XXXXX",
+	phone_number = "+1XXXXXXXXXXX"
+)
+
+twitter = dict(
+	token = "XXXXX",
+	token_secret = "XXXXX",
+	api_key = "XXXXX",
+	api_secret = "XXXXX"
+)
