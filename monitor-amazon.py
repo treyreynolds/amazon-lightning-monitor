@@ -1,6 +1,12 @@
 import config
 import feedparser
 import logging
+import requests
+import bs4
+import urllib2
+import cookielib
+from re import sub
+from decimal import Decimal
 from twitter import *
 from twilio.rest import TwilioRestClient
 
@@ -48,3 +54,27 @@ for status in statuses:
 
 
 logging.debug("Checked Twitter: " + str(twitter_count))
+
+url = 'http://www.amazon.com/dp/B00I0S6YWM/ref=cm_sw_su_dp'
+
+def grab_data_with_cookie(cookie_jar, url):
+    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie_jar))
+    data = opener.open(url)
+    return data
+
+cj = cookielib.CookieJar()
+
+#grab the data 
+data1 = grab_data_with_cookie(cj, url)
+content = data1.read()
+soup = bs4.BeautifulSoup(content)
+
+price = soup.find('span',{"id": 'priceblock_ourprice'}).getText()
+value = Decimal(sub(r'[^\d.]', '', price))
+
+logging.debug('Current Price: ' + price)
+
+if value < 250:
+	message = client.messages.create(body='Price below 250',
+		    to="+18067861300",    # Replace with your phone number
+		    from_="+18064170145") # Replace with your Twilio number
